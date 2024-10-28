@@ -1,13 +1,10 @@
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModuleAsyncOptions, TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { User } from 'src/contexts/users/domain/model/user.entity';
-// import { ConfigModule, ConfigService } from '@nestjs/config';
-// import { User } from '../content/users/domain/user.entity';
-// import { Profile } from '../content/profiles/domain/profile.entity';
-// import { Education } from '../content/education/domain/education.entity';
-// import { WorkExperience } from '../content/work-experience/domain/work-experience.entity';
-// import { Skill } from '../content/skills/domain/skills.entity';
-// import { UserSkill } from '../content/skills/domain/user-skills.entity';
+import {
+  TypeOrmModuleAsyncOptions,
+  TypeOrmModuleOptions,
+} from '@nestjs/typeorm';
+import { User } from 'src/contexts/users/infrastructure/repositories/user.orm-entity';
+
 
 export const databaseConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule], // Asegúrate de importar ConfigModule para proporcionar ConfigService

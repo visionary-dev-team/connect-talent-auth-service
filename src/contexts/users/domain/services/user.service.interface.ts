@@ -1,8 +1,11 @@
-import { User } from '../model/user.entity';
+import { FindOneOptions } from 'typeorm';
+import { User } from '../../infrastructure/repositories/user.orm-entity';
 
-export interface UserServiceInterface {
+export interface IUserService {
   findAll(): Promise<User[]>;
   findOne(id: number): Promise<User | null>;
   create(user: Partial<User>): Promise<User>;
   delete(id: number): Promise<void>;
+
+  validateUserCredentials(options: FindOneOptions<User>): Promise<User | null>;
 }

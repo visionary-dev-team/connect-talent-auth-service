@@ -4,6 +4,7 @@ import { LoggerModule } from 'src/contexts/shared/logger/infrastructure/logger.m
 import { HttpApiModule } from './http-api/http-api.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from 'src/config/database.config';
+import { UsersModule } from 'src/contexts/users/user.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { databaseConfig } from 'src/config/database.config';
 
     HttpApiModule,
     LoggerModule,
+    UsersModule
   ],
 })
 export class AppModule {}

@@ -1,8 +1,12 @@
-import { User } from '../model/user.entity';
+import { FindOneOptions } from 'typeorm';
+import { User } from '../../infrastructure/repositories/user.orm-entity';
 
-export interface UserRepository {
+export interface IUserRepository {
   findAll(): Promise<User[]>;
-  findOne(id: number): Promise<User | null>;
+  findOneById(id: number): Promise<User | null>;
   create(user: Partial<User>): Promise<User>;
   delete(id: number): Promise<void>;
+
+  findOne(options: FindOneOptions<User>): Promise<User | null>;
 }
+export const IUserRepositoryToken = Symbol('IUserRepositoryToken');

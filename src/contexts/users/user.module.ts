@@ -1,20 +1,22 @@
+// user.module.ts
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserController } from './adapter/user.controller';
-import { TypeOrmUserRepository } from './infrastructure/repositories/typeorm-user.repository';
-import { User } from './domain/model/user.entity';
-import { UserService } from './infrastructure/services/user.service';
+import { TypeOrmUserRepository } from './infrastructure/repositories/user.repository';
+import { User } from './infrastructure/repositories/user.orm-entity';
+import { UserController } from './adapter/controllers/user.controller';
+import { IUserRepositoryToken } from './domain/repositories/user.repository';
+import { CreateUserUseCase } from './application/create-user.use-case';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   providers: [
     {
-      provide: 'UserRepository',
+      provide: IUserRepositoryToken,
       useClass: TypeOrmUserRepository,
     },
-    UserService,
+    CreateUserUseCase,
   ],
   controllers: [UserController],
-  exports: ['UserRepository'],
+  exports: [IUserRepositoryToken],
 })
 export class UsersModule {}
