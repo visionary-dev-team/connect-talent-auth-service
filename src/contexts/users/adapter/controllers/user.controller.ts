@@ -20,10 +20,9 @@ export class UserController {
   // }
 
   @Post('collaborator')
-  create(@Body() createUserDto: CreateUserDto): Promise<ResponseCreateUserDto> {
-    console.log("🚀 ~ UserController ~ create ~ createUserDto:", createUserDto)
-    
-    return this.createUserUseCase.execute({
+  async create(@Body() createUserDto: CreateUserDto): Promise<ResponseCreateUserDto> {
+    console.log('🚀 ~ UserController ~ create ~ createUserDto:', createUserDto);
+    return await this.createUserUseCase.execute({
       ...createUserDto,
       role: ValidRoles.COLLABORATOR,
     });

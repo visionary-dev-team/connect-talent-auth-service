@@ -1,4 +1,4 @@
-import { TokensDto } from 'src/contexts/shared/auth/adapter/dtos/responsej-jwt.auth.dto';
+import { TokensDto } from 'src/contexts/auth/adapters/dtos/response-jwt.auth.dto';
 import { UserBasicResponseDto } from './user-basic-response.dto';
 
 export class ResponseCreateUserDto {

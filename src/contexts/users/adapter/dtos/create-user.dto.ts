@@ -1,19 +1,23 @@
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
   IsNotEmpty,
+  IsOptional,
   IsString,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { CreateProfileDTO } from 'src/contexts/profile/adapters/dtos/create-profile.dto';
 
 export class CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  firstName: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // firstName: string;
 
-  @IsNotEmpty()
-  @IsString()
-  lastName: string;
+  // @IsNotEmpty()
+  // @IsString()
+  // lastName: string;
 
   @IsEmail()
   email: string;
@@ -22,4 +26,9 @@ export class CreateUserDto {
   @IsString()
   @MinLength(6)
   password: string;
+
+  @ValidateNested()
+  @Type(() => CreateProfileDTO)
+  @IsOptional()
+  profile?: CreateProfileDTO;
 }

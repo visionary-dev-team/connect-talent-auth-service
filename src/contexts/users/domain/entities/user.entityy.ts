@@ -3,8 +3,7 @@ export interface UserProps {
   id?: number;
   email: string;
   provider?: string;
-  firstName: string;
-  lastName: string;
+
   accountValidated?: boolean;
   role: ValidRoles;
   createdAt?: Date;
@@ -15,13 +14,13 @@ export interface UserProps {
   phoneNumber?: string;
   recoveryCode?: string;
   deletedAt?: Date;
+  profile?: number;
 }
 
 export class User {
-  id: number;
+  id?: number;
   email: string;
-  firstName: string;
-  lastName?: string;
+
   providerId?: string;
   accountValidated: boolean;
   provider?: string;
@@ -33,13 +32,14 @@ export class User {
   createdAt: Date;
   updatedAt: Date;
   deletedAt?: Date;
+  profile?: number;
 
   constructor({
     id,
     email,
     provider,
-    lastName,
-    firstName,
+
+    profile,
     accountValidated,
     role,
     createdAt,
@@ -64,7 +64,6 @@ export class User {
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
-    this.firstName = firstName;
-    this.lastName = lastName;
+    this.profile = profile;
   }
 }

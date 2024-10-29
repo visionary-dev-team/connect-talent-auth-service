@@ -1,51 +1,50 @@
+import { Profile } from 'src/contexts/profile/infrastructure/repositories/profile.orm-entity';
 import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
 import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
   DeleteDateColumn,
+  OneToOne,
+  OneToMany,
+  JoinColumn,
 } from 'typeorm';
 
-@Entity()
+@Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ name: 'email', unique: true })
   email: string;
 
-  @Column()
-  firstName: string;
-
-  @Column()
-  lastName: string;
-
-  @Column({ nullable: true })
+  @Column({ name: 'password', nullable: true })
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'provider', nullable: true })
   provider: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'provider_id', nullable: true })
   providerId: string;
 
-  @Column({ default: false })
+  @Column({ name: 'account_validated', default: false })
   accountValidated: boolean;
 
   @Column({
+    name: 'role',
     type: 'enum',
     enum: ValidRoles,
     default: ValidRoles.COLLABORATOR,
   })
   role: ValidRoles;
 
-  @Column({ nullable: true })
+  @Column({ name: 'phone_number', nullable: true })
   phoneNumber: string;
 
-  @Column({ nullable: true })
+  @Column({ name: 'recovery_code', nullable: true })
   recoveryCode: string;
 
-  @Column({ default: false })
+  @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
@@ -60,4 +59,10 @@ export class User {
 
   @DeleteDateColumn({ nullable: true })
   deletedAt?: Date;
+
+  @OneToOne(() => Profile, (profile) => profile.user, {
+    cascade: true,
+  })
+  @JoinColumn({ name: 'profile_id' })
+  profile: Profile | number;
 }

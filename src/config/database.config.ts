@@ -1,26 +1,27 @@
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import {
   TypeOrmModuleAsyncOptions,
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
+import { Profile } from 'src/contexts/profile/infrastructure/repositories/profile.orm-entity';
 import { User } from 'src/contexts/users/infrastructure/repositories/user.orm-entity';
-
+import { ConfigModule } from './config.module';
+import { AppConfig } from './env.config';
 
 export const databaseConfig: TypeOrmModuleAsyncOptions = {
   imports: [ConfigModule], // Asegúrate de importar ConfigModule para proporcionar ConfigService
-  inject: [ConfigService], // ConfigService se inyecta para usar las variables de entorno
+  inject: [AppConfig], // ConfigService se inyecta para usar las variables de entorno
   useFactory: async (
-    configService: ConfigService
+    configService: AppConfig
   ): Promise<TypeOrmModuleOptions> => {
     return {
-      type: 'postgres', // Ajusta según el tipo de base de datos
-      host: configService.get<string>('DB_HOST', 'localhost'),
-      port: configService.get<number>('DB_PORT', 5432),
-      username: configService.get<string>('DB_USERNAME'),
-      password: configService.get<string>('DB_PASSWORD'),
-      database: configService.get<string>('DB_NAME'),
-      entities: [User], // Importa explícitamente tus entidades
-      synchronize: configService.get<boolean>('DB_SYNC', true),
+      type: configService.dbType, // Ajusta según el tipo de base de datos
+      host: configService.dbHost,
+      port: configService.dbPort,
+      username: configService.dbUsername,
+      password: configService.dbPassword,
+      database: configService.dbName,
+      entities: [User, Profile], // Importa explícitamente tus entidades
+      synchronize: configService.dbSynchronize,
     };
   },
 };

@@ -4,59 +4,91 @@ import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
 import { User } from '../domain/entities/user.entityy';
 import * as bcrypt from 'bcrypt';
 
-import {
-  IUserRepository,
-  IUserRepositoryToken,
-} from '../domain/repositories/user.repository';
+import { IUserRepository } from '../domain/repositories/user.repository';
 import { ResponseCreateUserDto } from '../adapter/dtos/response-create-user.dto';
-import { BadRequestException, Inject } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+} from '@nestjs/common';
+import { AuthService } from 'src/contexts/auth/infrastructure/services/auth.service';
+import { IUserRepositoryToken } from '../domain/repositories/user.repository.interface';
+import {
+  CreateProfileUseCase,
+  ICreateProfileDTO,
+} from 'src/contexts/profile/application/create-profile.use-case';
+import { AppConfig } from 'src/config/env.config';
 
 interface CreateUserInput {
-  firstName: string;
-  lastName: string;
   email: string;
   password: string;
   role: ValidRoles;
+  profile?: ICreateProfileDTO;
 }
+
 export class CreateUserUseCase {
   constructor(
+    private readonly appConfig: AppConfig,
     @Inject(IUserRepositoryToken)
-    private readonly userRepository: IUserRepository
+    private readonly userRepository: IUserRepository,
+
+    private readonly authService: AuthService, // Inyectamos el servicio AuthService
+    private readonly createProfileUseCase: CreateProfileUseCase
   ) {}
 
   async execute(
     createUserInput: CreateUserInput
   ): Promise<ResponseCreateUserDto> {
-    console.log('🚀 ~ CreateUserUseCase ~ createUserInput:', createUserInput);
-
-    const existingUser = await this.userRepository.findOne({
-      where: { email: createUserInput.email },
-    });
-    if (existingUser) {
-      throw new BadRequestException({
-        message: 'El correo electrónico ya está en uso',
-        field: 'email',
+    try {
+      const { profile: profileData, ...rest } = createUserInput;
+      const existingUser = await this.userRepository.findOne({
+        where: { email: createUserInput.email },
       });
+
+      if (existingUser) {
+        throw new BadRequestException({
+          message: 'El correo electrónico ya está en uso',
+          field: 'email',
+        });
+      }
+      const [profile, hash] = await Promise.all([
+        this.createProfileUseCase.execute(profileData),
+        this.hashPassword(createUserInput.password, this.appConfig.bcryptSalt),
+      ]);
+
+      const user = new User({
+        ...rest,
+        profile: profile.id,
+        password: hash,
+      });
+
+      const newUserRepository = await this.userRepository.create(user);
+
+      const [accessToken, refreshToken] = await Promise.all([
+        this.authService.generateToken(newUserRepository),
+        this.authService.generateRefreshToken(newUserRepository),
+      ]);
+
+      return {
+        user: {
+          email: newUserRepository.email,
+          id: newUserRepository.id,
+          profile: profile,
+
+          role: newUserRepository.role,
+        },
+        tokens: {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        },
+      };
+    } catch (err) {
+      throw err;
+      //TODO: MEJORAR EL MANEJO DE RESPUESTA
     }
-
-    const user = new User(createUserInput);
-    console.log('🚀 ~ CreateUserUseCase ~ User:', User);
-    // Validaciones y lógica de negocio
-    const newUserRepository = await this.userRepository.create(user);
-
-    console.log('newUserRepository', newUserRepository);
-    return {
-      user: {
-        email: newUserRepository.email,
-        id: newUserRepository.id,
-        firstName: newUserRepository.firstName,
-        lastName: newUserRepository.lastName,
-        role: newUserRepository.role,
-      },
-      tokens: {
-        accessToken: '',
-        refreshToken: '',
-      },
-    };
   }
+
+  hashPassword = (password: string, salt: number): string => {
+    const saltGenerated = bcrypt.genSaltSync(salt);
+    return bcrypt.hashSync(password, saltGenerated);
+  };
 }

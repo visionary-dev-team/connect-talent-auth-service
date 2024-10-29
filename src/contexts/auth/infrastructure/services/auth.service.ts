@@ -13,7 +13,11 @@ export class AuthService implements IAuthService {
 
   async generateToken(user: User): Promise<string> {
     const payload = { sub: user.id, email: user.email, role: user.role };
-    return this.jwtService.sign(payload);
+    return this.jwtService.sign(payload, { expiresIn: '1h' });
+  }
+  async generateRefreshToken(user: User): Promise<string> {
+    const payload = { sub: user.id, email: user.email };
+    return this.jwtService.sign(payload, { expiresIn: '7d' });
   }
 
   async validateUser(payload: any): Promise<User | null> {
