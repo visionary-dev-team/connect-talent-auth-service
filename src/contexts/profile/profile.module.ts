@@ -2,7 +2,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Profile } from './infrastructure/repositories/profile.orm-entity';
-import { IUserRepositoryToken } from '../users/domain/repositories/user.repository.interface';
 import { TypeOrmProfileRepository } from './infrastructure/repositories/profile.repository';
 import { CreateProfileUseCase } from './application/create-profile.use-case';
 import { ProfileController } from './adapters/controllers/profile.controller';

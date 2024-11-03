@@ -4,9 +4,10 @@ import { HttpApiModule } from './http-api/http-api.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { databaseConfig } from 'src/config/database.config';
 import { UsersModule } from 'src/contexts/users/user.module';
-import path from 'path';
 import { AuthModule } from 'src/contexts/auth/auth.module';
 import { ConfigModule } from 'src/config/config.module';
+import { SkillModule } from 'src/contexts/skills/skill.module';
+import { SkillCategoryModule } from 'src/contexts/skill-category/skill-category.module';
 
 @Module({
   imports: [
@@ -16,6 +17,8 @@ import { ConfigModule } from 'src/config/config.module';
     LoggerModule,
     UsersModule,
     AuthModule,
+    SkillModule,
+    SkillCategoryModule,
   ],
 })
 export class AppModule {}

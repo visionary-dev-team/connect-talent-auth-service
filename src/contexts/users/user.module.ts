@@ -6,9 +6,9 @@ import { User } from './infrastructure/repositories/user.orm-entity';
 import { UserController } from './adapter/controllers/user.controller';
 import { CreateUserUseCase } from './application/create-user.use-case';
 import { AuthModule } from '../auth/auth.module';
-import { IUserRepositoryToken } from './domain/repositories/user.repository.interface';
 import { ConfigModule } from 'src/config/config.module';
 import { ProfilesModule } from '../profile/profile.module';
+import { IUserRepositoryToken } from './domain/repositories/user.repository.interface';
 
 @Module({
   imports: [

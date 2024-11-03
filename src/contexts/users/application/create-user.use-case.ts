@@ -4,19 +4,18 @@ import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
 import { User } from '../domain/entities/user.entityy';
 import * as bcrypt from 'bcrypt';
 
-import { IUserRepository } from '../domain/repositories/user.repository';
 import { ResponseCreateUserDto } from '../adapter/dtos/response-create-user.dto';
-import {
-  BadRequestException,
-  Inject,
-} from '@nestjs/common';
+import { BadRequestException, Inject } from '@nestjs/common';
 import { AuthService } from 'src/contexts/auth/infrastructure/services/auth.service';
-import { IUserRepositoryToken } from '../domain/repositories/user.repository.interface';
 import {
   CreateProfileUseCase,
   ICreateProfileDTO,
 } from 'src/contexts/profile/application/create-profile.use-case';
 import { AppConfig } from 'src/config/env.config';
+import {
+  IUserRepository,
+  IUserRepositoryToken,
+} from '../domain/repositories/user.repository.interface';
 
 interface CreateUserInput {
   email: string;

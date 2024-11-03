@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { BadRequestException, Inject } from '@nestjs/common';
-import { IUserRepository } from '../domain/repositories/user.repository';
+import { IUserRepository } from '../domain/repositories/user.repository.interface';
 import { IUserRepositoryToken } from '../domain/repositories/user.repository.interface';
 
 export class ValidateUserCredentialsUseCase {

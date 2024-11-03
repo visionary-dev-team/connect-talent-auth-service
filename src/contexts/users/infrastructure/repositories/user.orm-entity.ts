@@ -1,5 +1,6 @@
 import { Profile } from 'src/contexts/profile/infrastructure/repositories/profile.orm-entity';
 import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
+import { UserSkill } from 'src/contexts/skills/infrastructure/entities/skill-user.orm.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -65,4 +66,7 @@ export class User {
   })
   @JoinColumn({ name: 'profile_id' })
   profile: Profile | number;
+
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
+  skills: UserSkill[];
 }
