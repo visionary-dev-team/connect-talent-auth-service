@@ -15,10 +15,7 @@ export class SkillCategoryController {
     const dataResult = await this.createSkillCategoryUseCase.execute(
       createSkillCategoryDto
     );
-    console.log(
-      '🚀 ~ file: skill-category.controller.ts:16 ~ SkillCategoryController ~ create ~ dataResult:',
-      dataResult
-    );
+ 
     return dataResult;
   }
 

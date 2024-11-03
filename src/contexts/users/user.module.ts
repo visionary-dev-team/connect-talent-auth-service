@@ -1,4 +1,3 @@
-// user.module.ts
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmUserRepository } from './infrastructure/repositories/user.repository';
@@ -11,14 +10,14 @@ import { ProfilesModule } from '../profile/profile.module';
 import { IUserRepositoryToken } from './domain/repositories/user.repository.interface';
 import { FindByIdUserUseCase } from './application/find-by-id-user.use-case';
 import { SkillModule } from '../skills/skill.module';
+import { FindUserByEmailUseCase } from './application/find-by-email-use-case';
 
 @Module({
   imports: [
     ConfigModule,
-
     TypeOrmModule.forFeature([User]),
     SkillModule,
-    forwardRef(() => AuthModule),
+    forwardRef(() => AuthModule), // Usar forwardRef para evitar ciclos
     forwardRef(() => ProfilesModule),
   ],
   providers: [
@@ -28,8 +27,15 @@ import { SkillModule } from '../skills/skill.module';
     },
     CreateUserUseCase,
     FindByIdUserUseCase,
+    FindUserByEmailUseCase
   ],
   controllers: [UserController],
-  exports: [IUserRepositoryToken, FindByIdUserUseCase],
+  exports: [
+    IUserRepositoryToken,
+    FindByIdUserUseCase,
+    CreateUserUseCase,
+    FindUserByEmailUseCase
+    // FindUserByEmailUseCase,
+  ],
 })
 export class UsersModule {}

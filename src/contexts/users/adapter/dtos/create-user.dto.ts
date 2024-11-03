@@ -22,6 +22,19 @@ export class CreateUserDto {
   @IsEmail()
   email: string;
 
+  @IsString()
+  @IsOptional()
+  role: string;
+
+
+  @IsString()
+  @IsOptional()
+  provider: string;
+
+  @IsString()
+  @IsOptional()
+  providerId: string;
+
   @IsNotEmpty()
   @IsString()
   @MinLength(6)

@@ -8,5 +8,6 @@ export interface IUserRepository {
   delete(id: number): Promise<void>;
 
   findOne(options: FindOneOptions<User>): Promise<User | null>;
+  findByEmail(email: string): Promise<User>;
 }
 export const IUserRepositoryToken = Symbol('IUserRepositoryToken');

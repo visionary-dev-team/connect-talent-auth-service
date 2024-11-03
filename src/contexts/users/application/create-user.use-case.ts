@@ -16,12 +16,15 @@ import {
   IUserRepository,
   IUserRepositoryToken,
 } from '../domain/repositories/user.repository.interface';
+import { AuthProvider } from '../infrastructure/entities/user.orm-entity';
 
 interface CreateUserInput {
   email: string;
   password: string;
   role: ValidRoles;
   profile?: ICreateProfileDTO;
+  provider?: AuthProvider | string;
+  providerId?: string;
 }
 
 export class CreateUserUseCase {
@@ -30,7 +33,7 @@ export class CreateUserUseCase {
     @Inject(IUserRepositoryToken)
     private readonly userRepository: IUserRepository,
 
-    private readonly authService: AuthService, // Inyectamos el servicio AuthService
+    private readonly authService: AuthService,
     private readonly createProfileUseCase: CreateProfileUseCase
   ) {}
 

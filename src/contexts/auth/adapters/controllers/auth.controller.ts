@@ -1,9 +1,22 @@
-import { Controller, Post, Body, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  BadRequestException,
+  Get,
+  UseGuards,
+  Res,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from '../../infrastructure/services/auth.service';
 import { LoginDto } from '../dtos/login.dto';
 import { ValidateUserCredentialsUseCase } from 'src/contexts/users/application/validate-user-credential.use-case';
 import { ResponseLoginAuthDto } from '../dtos/response-login.auth.dto';
 import { CreateProfileDTO } from 'src/contexts/profile/adapters/dtos/create-profile.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GoogleOauthGuard } from '../../infrastructure/guard/google-auth.guard';
+import { FastifyRequest, FastifyReply } from 'fastify';
+
 // import { UserService } from 'src/contexts/users/infrastructure/services/typeorm-user.service';
 
 @Controller('auth')
@@ -38,5 +51,27 @@ export class AuthController {
         refreshToken,
       },
     };
+  }
+
+  @Get('google')
+  @UseGuards(GoogleOauthGuard)
+  async googleLogin() {}
+
+  @Get('/google/callback')
+  @UseGuards(GoogleOauthGuard)
+  async googleAuthCallBack(
+    @Req() req: FastifyRequest,
+    @Res() res: FastifyReply
+  ) {
+    const data = await this.authService.singInGoogle(req['user']);
+
+    res.setCookie('data', JSON.stringify(data), {
+      maxAge: 2592000000, // 30 días en milisegundos
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: false, // Cámbialo a true si estás en HTTPS
+    });
+
+    res.status(200).send({ message: 'Cookie configurada correctamente' });
   }
 }

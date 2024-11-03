@@ -20,7 +20,7 @@ export class TypeOrmUserRepository implements IUserRepository {
   }
 
   async create(user: Partial<User>): Promise<User> {
-    console.log("🚀 ~ TypeOrmUserRepository ~ create ~ user:", user)
+    console.log('🚀 ~ TypeOrmUserRepository ~ create ~ user:', user);
     const newUser = await this.userRepository.save({ ...user });
 
     return newUser;
@@ -31,5 +31,11 @@ export class TypeOrmUserRepository implements IUserRepository {
   }
   async findOne(options: FindOneOptions<User>): Promise<User | null> {
     return this.userRepository.findOne(options);
+  }
+
+  async findByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({
+      where: { email },
+    });
   }
 }

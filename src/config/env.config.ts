@@ -5,6 +5,17 @@ export class AppConfig {
   constructor(private readonly configService: ConfigService) {}
 
   // Configuración general
+
+  get googlesSecret(): string {
+    return this.configService.get<string>('GOOGLE_SECRET');
+  }
+  get googleClientID(): string {
+    return this.configService.get<string>('GOOGLE_CLIENT_ID');
+  }
+  get googleCallback():string{
+    return this.configService.get<string>('GOOGLE_CALLBACK');
+
+  }
   get port(): number {
     return this.configService.get<number>('PORT', 3000);
   }

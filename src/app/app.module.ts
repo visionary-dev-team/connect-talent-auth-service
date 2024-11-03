@@ -12,6 +12,7 @@ import { SkillCategoryModule } from 'src/contexts/skill-category/skill-category.
 @Module({
   imports: [
     ConfigModule,
+    
     TypeOrmModule.forRootAsync(databaseConfig), // Usar la configuración centralizada para la conexión a la DB
     HttpApiModule,
     LoggerModule,

@@ -9,22 +9,23 @@ import { AuthController } from './adapters/controllers/auth.controller';
 import { ValidateUserCredentialsUseCase } from '../users/application/validate-user-credential.use-case';
 import { IUserRepositoryToken } from '../users/domain/repositories/user.repository.interface';
 import { ConfigModule } from 'src/config/config.module';
+import { GoogleStrategy } from './infrastructure/strategy/google-auth.strategy';
 
 @Module({
   imports: [
+    ConfigModule,
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
       secret: process.env.JWT_SECRET || 'defaultSecretKey',
       signOptions: { expiresIn: '1h' },
     }),
-    // ConfigModule, 
-    forwardRef(() => UsersModule),
+    forwardRef(() => UsersModule), // Usar forwardRef para evitar ciclos
   ],
   controllers: [AuthController],
-
   providers: [
     AuthService,
     JwtStrategy,
+    GoogleStrategy,
     {
       provide: ValidateUserCredentialsUseCase,
       useFactory: (userRepository) => {

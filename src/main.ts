@@ -12,6 +12,7 @@ import { AppModule } from './app/app.module';
 import { SuccessResponseNormalizerInterceptor } from './app/http-api/response-normalizer/success-response-normalizer.interceptor';
 import { LoggerInterceptor } from './contexts/shared/logger/infrastructure/logger.interceptor';
 import { API } from './app/http-api/routes/route.constants';
+import fastifyCookie from '@fastify/cookie';
 
 async function bootstrap() {
   console.log('LOGGER_LEVEL (dotenv):', process.env.LOGGER_LEVEL);
@@ -24,7 +25,9 @@ async function bootstrap() {
   const logger = app.get(NestLoggerService); // Cambiar para obtener NestLoggerService
   app.useLogger(logger);
   app.setGlobalPrefix(API);
-
+  app.register(fastifyCookie, {
+    secret: process.env.SECRET_COOKIE, // Clave opcional para firmar las cookies
+  });
   app.useGlobalFilters(app.get(ErrorResponseNormalizerFilter));
   app.useGlobalInterceptors(
     app.get(LoggerInterceptor),

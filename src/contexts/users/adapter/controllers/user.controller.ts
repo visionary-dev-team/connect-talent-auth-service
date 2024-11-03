@@ -53,19 +53,6 @@ export class UserController {
     @Body() assignSkillsDto: AssignSkillsDto
   ) {
     try {
-      console.log(
-        '🚀 ~ file: user.controller.ts:55 ~ UserController ~ assignSkillsDto:',
-        assignSkillsDto
-      );
-      console.log(
-        '🚀 ~ file: user.controller.ts:55 ~ UserController ~ user:',
-        user
-      );
-      console.log(
-        '🚀 ~ file: user.controller.ts:51 ~ UserController ~ user:',
-        1
-      );
-
       await this.assignSkillUseCase.execute({
         userId: user.id,
         skills: assignSkillsDto.skillIds,

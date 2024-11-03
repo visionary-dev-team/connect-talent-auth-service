@@ -11,6 +11,14 @@ import {
   JoinColumn,
 } from 'typeorm';
 
+export enum AuthProvider {
+  GOOGLE = 'google',
+  FACEBOOK = 'facebook',
+  GITHUB = 'gitHub',
+  LINKEDIN = 'linkedin',
+  TWITTER = 'twitter',
+  OTHER = 'other',
+}
 @Entity({ name: 'users' })
 export class User {
   @PrimaryGeneratedColumn()
@@ -22,8 +30,13 @@ export class User {
   @Column({ name: 'password', nullable: true })
   password: string;
 
-  @Column({ name: 'provider', nullable: true })
-  provider: string;
+  @Column({
+    name: 'provider',
+    type: 'enum',
+    enum: AuthProvider,
+    nullable: true,
+  })
+  provider: string | AuthProvider;
 
   @Column({ name: 'provider_id', nullable: true })
   providerId: string;
