@@ -6,6 +6,6 @@ export interface ISkillRepository {
   findOneById(id: number): Promise<Skill | null>;
   create(user: Partial<Skill>): Promise<Skill>;
   delete(id: number): Promise<void>;
-  assignUserSkill(userId: number, skillId: number);
   findOne(options: FindOneOptions<Skill>): Promise<Skill | null>;
+  findByIds(ids: number[]): Promise<Skill[]>;
 }

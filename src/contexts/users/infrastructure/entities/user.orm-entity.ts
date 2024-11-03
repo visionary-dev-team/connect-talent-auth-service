@@ -68,5 +68,5 @@ export class User {
   profile: Profile | number;
 
   @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
-  skills: UserSkill[];
+  userSkills: UserSkill[];
 }

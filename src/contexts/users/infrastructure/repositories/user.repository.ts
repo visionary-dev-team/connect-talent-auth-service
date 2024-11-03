@@ -1,7 +1,7 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from 'src/contexts/shared/dependency-injection/injectable';
 import { FindOneOptions, Repository } from 'typeorm';
-import { User } from './user.orm-entity';
+import { User } from '../entities/user.orm-entity';
 import { IUserRepository } from '../../domain/repositories/user.repository.interface';
 
 @Injectable()

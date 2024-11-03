@@ -1,4 +1,4 @@
-import { User } from 'src/contexts/users/infrastructure/repositories/user.orm-entity';
+import { User } from 'src/contexts/users/infrastructure/entities/user.orm-entity';
 import {
   Entity,
   PrimaryGeneratedColumn,

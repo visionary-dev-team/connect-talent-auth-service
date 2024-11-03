@@ -1,5 +1,5 @@
 import { FindOneOptions } from 'typeorm';
-import { User } from '../../infrastructure/repositories/user.orm-entity';
+import { User } from '../../infrastructure/entities/user.orm-entity';
 
 export interface IUserRepository {
   findAll(): Promise<User[]>;

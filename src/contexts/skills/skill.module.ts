@@ -9,6 +9,10 @@ import { UserSkill } from './infrastructure/entities/skill-user.orm.entity';
 import { TypeOrmSkillRepository } from './infrastructure/repositories/skill-repository';
 import { SkillCategoryModule } from '../skill-category/skill-category.module';
 import { FindAllSkillUseCase } from './application/find-all-skill.use-case';
+import { AssignSkillUserUseCase } from './application/assign-skill-user.use-case';
+import { TypeOrmUserSkillRepository } from './infrastructure/repositories/skill-user.repository';
+import { IUserSkillRepositoryToken } from './domain/repositories/skill-user.repository.interface';
+import { ValidateAndGetSkillByIdsUseCase } from './application/find-by-ids-skill.use-case';
 
 @Module({
   imports: [
@@ -18,12 +22,20 @@ import { FindAllSkillUseCase } from './application/find-all-skill.use-case';
   ],
   providers: [
     {
+      provide: IUserSkillRepositoryToken,
+      useClass: TypeOrmUserSkillRepository,
+    },
+    {
       provide: ISkillRepositoryToken,
       useClass: TypeOrmSkillRepository,
     },
     CreateSkillCase,
     FindAllSkillUseCase,
+    AssignSkillUserUseCase,
+    ValidateAndGetSkillByIdsUseCase
   ],
   controllers: [SkillController],
+
+  exports: [AssignSkillUserUseCase],
 })
 export class SkillModule {}

@@ -7,7 +7,7 @@ import { TypeOrmSkillCategoryRepository } from './infrastructure/repositories/sk
 import { CreateSkillCategoryUseCase } from './application/create-skill-category.use-case';
 import { SkillCategoryController } from './adapter/controllers/skill-category.controller';
 import { FindAllSkillCategoryUseCase } from './application/find-all-skill-category.use.case';
-import { validateAndGetCategoriesByIdsUseCase } from './application/find-by-ids-skill-category.use-case';
+import { ValidateAndGetCategoriesByIdsUseCase } from './application/find-by-ids-skill-category.use-case';
 
 @Module({
   imports: [ConfigModule, TypeOrmModule.forFeature([SkillCategory])],
@@ -18,9 +18,9 @@ import { validateAndGetCategoriesByIdsUseCase } from './application/find-by-ids-
     },
     CreateSkillCategoryUseCase,
     FindAllSkillCategoryUseCase,
-    validateAndGetCategoriesByIdsUseCase,
+    ValidateAndGetCategoriesByIdsUseCase,
   ],
   controllers: [SkillCategoryController],
-  exports: [validateAndGetCategoriesByIdsUseCase],
+  exports: [ValidateAndGetCategoriesByIdsUseCase],
 })
 export class SkillCategoryModule {}

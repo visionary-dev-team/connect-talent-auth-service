@@ -3,7 +3,7 @@ import {
   TypeOrmModuleOptions,
 } from '@nestjs/typeorm';
 import { Profile } from 'src/contexts/profile/infrastructure/repositories/profile.orm-entity';
-import { User } from 'src/contexts/users/infrastructure/repositories/user.orm-entity';
+import { User } from 'src/contexts/users/infrastructure/entities/user.orm-entity';
 import { ConfigModule } from './config.module';
 import { AppConfig } from './env.config';
 import { SkillCategory } from 'src/contexts/skill-category/infrastructure/repositories/skill-category.orm.entity';

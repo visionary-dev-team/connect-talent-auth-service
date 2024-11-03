@@ -4,7 +4,7 @@ import {
   ISkillCategoryRepositoryToken,
 } from '../domain/repositories/skill-category-repository.interface';
 
-export class validateAndGetCategoriesByIdsUseCase {
+export class ValidateAndGetCategoriesByIdsUseCase {
   constructor(
     @Inject(ISkillCategoryRepositoryToken)
     private readonly skillCategoryRepository: ISkillCategoryRepository

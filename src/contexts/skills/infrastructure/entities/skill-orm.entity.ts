@@ -4,7 +4,6 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  ManyToOne,
   OneToMany,
   JoinTable,
 } from 'typeorm';
@@ -38,6 +37,6 @@ export class Skill {
   })
   categories: SkillCategory[];
 
-  @OneToMany(() => UserSkill, (userSkill) => userSkill.user)
-  users: UserSkill;
+  @OneToMany(() => UserSkill, (userSkill) => userSkill.skill)
+  userSkills: UserSkill[];
 }

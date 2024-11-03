@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { IUserService } from '../domain/services/user.service.interface';
-import { User } from '../infrastructure/repositories/user.orm-entity';
+import { User } from '../infrastructure/entities/user.orm-entity';
 
 @Injectable()
 export class UserUseCasesService {
@@ -13,9 +13,7 @@ export class UserUseCasesService {
     return this.userService.findAll();
   }
 
-  findOne(id: number): Promise<User | null> {
-    return this.userService.findOne(id);
-  }
+ 
 
   create(user: Partial<User>): Promise<User> {
     return this.userService.create(user);

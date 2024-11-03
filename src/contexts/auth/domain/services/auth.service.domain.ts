@@ -1,4 +1,4 @@
-import { User } from '../../../users/infrastructure/repositories/user.orm-entity';
+import { User } from '../../../users/infrastructure/entities/user.orm-entity';
 
 export interface IAuthService {
   generateToken(user: User): Promise<string>;

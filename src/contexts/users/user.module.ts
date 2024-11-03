@@ -2,19 +2,22 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TypeOrmUserRepository } from './infrastructure/repositories/user.repository';
-import { User } from './infrastructure/repositories/user.orm-entity';
+import { User } from './infrastructure/entities/user.orm-entity';
 import { UserController } from './adapter/controllers/user.controller';
 import { CreateUserUseCase } from './application/create-user.use-case';
 import { AuthModule } from '../auth/auth.module';
 import { ConfigModule } from 'src/config/config.module';
 import { ProfilesModule } from '../profile/profile.module';
 import { IUserRepositoryToken } from './domain/repositories/user.repository.interface';
+import { FindByIdUserUseCase } from './application/find-by-id-user.use-case';
+import { SkillModule } from '../skills/skill.module';
 
 @Module({
   imports: [
     ConfigModule,
 
     TypeOrmModule.forFeature([User]),
+    SkillModule,
     forwardRef(() => AuthModule),
     forwardRef(() => ProfilesModule),
   ],
@@ -24,8 +27,9 @@ import { IUserRepositoryToken } from './domain/repositories/user.repository.inte
       useClass: TypeOrmUserRepository,
     },
     CreateUserUseCase,
+    FindByIdUserUseCase,
   ],
   controllers: [UserController],
-  exports: [IUserRepositoryToken],
+  exports: [IUserRepositoryToken, FindByIdUserUseCase],
 })
 export class UsersModule {}

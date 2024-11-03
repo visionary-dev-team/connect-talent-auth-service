@@ -2,7 +2,7 @@ import { Inject } from '@nestjs/common';
 import { ISkillRepository } from '../domain/repositories/skill.repository.interface';
 import { ISkillRepositoryToken } from '../domain/repositories/skill.repository';
 import { AppConfig } from 'src/config/env.config';
-import { validateAndGetCategoriesByIdsUseCase } from 'src/contexts/skill-category/application/find-by-ids-skill-category.use-case';
+import { ValidateAndGetCategoriesByIdsUseCase } from 'src/contexts/skill-category/application/find-by-ids-skill-category.use-case';
 
 interface CreateSkillInput {
   name: string;
@@ -14,7 +14,7 @@ export class CreateSkillCase {
     // private readonly appConfig: AppConfig,
     @Inject(ISkillRepositoryToken)
     private readonly skillRepository: ISkillRepository,
-    private readonly validateAndGetCategoriesByIds: validateAndGetCategoriesByIdsUseCase
+    private readonly validateAndGetCategoriesByIds: ValidateAndGetCategoriesByIdsUseCase
   ) {}
 
   async execute(createSkillInput: CreateSkillInput) {

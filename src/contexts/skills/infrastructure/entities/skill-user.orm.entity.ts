@@ -1,30 +1,41 @@
-import { User } from 'src/contexts/users/infrastructure/repositories/user.orm-entity';
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { User } from 'src/contexts/users/infrastructure/entities/user.orm-entity';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  Unique,
+} from 'typeorm';
 import { Skill } from './skill-orm.entity';
 
-
+@Unique(['user', 'skill']) // Clave única compuesta
 @Entity('user_skills')
 export class UserSkill {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.skills, { nullable: false })
+  @ManyToOne(() => User, (user) => user.userSkills, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user: User | number;
 
-  @ManyToOne(() => Skill, (skill) => skill.users, { nullable: false })
+  @ManyToOne(() => Skill, (skill) => skill.userSkills, { nullable: false })
   @JoinColumn({ name: 'skill_id' })
   skill: Skill;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 50, default: null })
   level: string;
 
-  @Column({ type: 'int' })
+  @Column({ type: 'int', default: 0 })
   yearsOfExperience: number;
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  @Column({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP',
+    onUpdate: 'CURRENT_TIMESTAMP',
+  })
   updatedAt: Date;
 }
