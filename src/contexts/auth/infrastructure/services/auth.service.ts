@@ -16,7 +16,7 @@ export class AuthService implements IAuthService {
 
     private readonly findUserByEmail: FindUserByEmailUseCase,
 
-    private readonly createUserUserCase: CreateUserUseCase
+    // private readonly createUserUserCase: CreateUserUseCase
   ) {}
 
   async generateToken(user: User): Promise<string> {
@@ -43,7 +43,7 @@ export class AuthService implements IAuthService {
     let newUser = await this.findUserByEmail.execute(user.email);
 
     if (!newUser) {
-      return await this.createUserUserCase.execute(user);
+      // return await this.createUserUserCase.execute(user);
     }
 
     const tokens = {

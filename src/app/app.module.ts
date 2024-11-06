@@ -8,12 +8,14 @@ import { AuthModule } from 'src/contexts/auth/auth.module';
 import { ConfigModule } from 'src/config/config.module';
 import { SkillModule } from 'src/contexts/skills/skill.module';
 import { SkillCategoryModule } from 'src/contexts/skill-category/skill-category.module';
+import { AlgorithmsModule } from 'src/contexts/shared/algorith/algorith.module';
 
 @Module({
   imports: [
     ConfigModule,
     
     TypeOrmModule.forRootAsync(databaseConfig), // Usar la configuración centralizada para la conexión a la DB
+    AlgorithmsModule,
     HttpApiModule,
     LoggerModule,
     UsersModule,
