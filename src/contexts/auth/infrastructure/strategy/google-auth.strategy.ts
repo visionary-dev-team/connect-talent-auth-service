@@ -1,44 +1,59 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { AppConfig } from 'src/config/env.config';
-import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
-import { Injectable } from 'src/contexts/shared/dependency-injection/injectable';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from 'src/contexts/users/adapter/dtos/create-user.dto';
 import { AuthProvider } from 'src/contexts/users/infrastructure/entities/user.orm-entity';
+import { ValidRoles } from 'src/contexts/shared/auth/models/valid-roles.enum';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
-  constructor(private readonly appConfig: AppConfig) {
+  constructor() {
     super({
-      clientID: appConfig.googleClientID,
-      clientSecret: appConfig.googlesSecret,
-      callbackURL: appConfig.googleCallback,
+      clientID:  '38593663813-qv61qlt21kt5276s5uvvh971rhocqulk.apps.googleusercontent.com',
+      clientSecret: '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',
+      callbackURL: 'http://localhost:3000/api/auth/google/callback',
       scope: ['profile', 'email'],
     });
+    console.log('GoogleStrategy initialized');
   }
 
-  async validate(
-    _accessToken: string,
-    _refreshToken: string,
-    profile: any,
-    done: VerifyCallback
-  ): Promise<any> {
-    const { id, name, emails, photos } = profile;
+  // Este método valida y transforma el perfil recibido de Google
+  async validate(accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
+    try {
+      const { id, name, emails, photos } = profile;
 
-    const user: CreateUserDto = {
-      email: emails,
-      password: 'hashed-google',
-      role: ValidRoles.COLLABORATOR, 
-      provider: AuthProvider.GOOGLE,
-      providerId: id,
-      profile: {
-        firstName: name.givenName,
-        lastName: name.familyName,
-        profilePictureUrl: photos[0].value,
-      } as any,
-    };
- ;
+      const user: CreateUserDto = {
+        email: emails?.[0]?.value || '',
+        password: 'hashed-google',
+        provider: AuthProvider.GOOGLE,
+        providerId: id,
+        role:ValidRoles.COLLABORATOR,
+        profile: {
+          firstName: name?.givenName || 'Default First Name',
+          lastName: name?.familyName || 'Default Last Name',
+          profilePictureUrl: photos?.[0]?.value || '',
+          country: '',
+        },
+      };
 
-    done(null, user);
+      console.log('User authenticated:', user);
+      done(null, user); // Devuelve el usuario autenticado al flujo
+    } catch (error) {
+      console.error('Error in GoogleStrategy validate:', error);
+      done(error, null); // Maneja errores de autenticación
+    }
+  }
+
+  // Sobreescribir el método redirect para usar Fastify
+  redirect(url: string, status: number): void {
+    const context = Reflect.getMetadata('fastify:context', this);
+    const reply = context?.reply;
+
+    if (!reply) {
+      throw new Error('Fastify reply object not found in context');
+    }
+
+    console.log('Redirecting to:', url);
+    reply.status(status).redirect(url); // Redirección con Fastify
   }
 }

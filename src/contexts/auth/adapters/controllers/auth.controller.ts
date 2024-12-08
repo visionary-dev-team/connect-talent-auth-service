@@ -55,14 +55,17 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleOauthGuard)
-  async googleLogin() {}
+  async googleLogin() {
+    console.log("hola")
+  }
 
-  @Get('/google/callback')
+  @Get('google/callback')
   @UseGuards(GoogleOauthGuard)
   async googleAuthCallBack(
     @Req() req: FastifyRequest,
     @Res() res: FastifyReply
   ) {
+    console.log('llego a callback')
     const data = await this.authService.singInGoogle(req['user']);
 
     res.setCookie('data', JSON.stringify(data), {

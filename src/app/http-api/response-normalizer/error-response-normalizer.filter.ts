@@ -11,15 +11,18 @@ import { FastifyReply } from 'fastify';
 @Catch()
 export class ErrorResponseNormalizerFilter implements ExceptionFilter {
   async catch(rawException: Error, host: ArgumentsHost) {
+  
+    
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
 
     // Verificar si la excepción es de tipo HttpException
     const exception =
-      rawException instanceof HttpException
-        ? rawException
-        : new InternalServerErrorException();
-
+    rawException instanceof HttpException
+    ? rawException
+    : new InternalServerErrorException();
+    
+    console.log("🚀 ~ file: error-response-normalizer.filter.ts:22 ~ ErrorResponseNormalizerFilter ~ exception:", exception)
     const status = exception.getStatus();
     const generalMessage = this.getGeneralMessage(exception);
 
@@ -32,8 +35,10 @@ export class ErrorResponseNormalizerFilter implements ExceptionFilter {
   }
 
   private mapToErrors(error: HttpException) {
+    console.log("🚀 ~ file: error-response-normalizer.filter.ts:35 ~ ErrorResponseNormalizerFilter ~ mapToErrors ~ error:", error)
     const response = error.getResponse();
 
+    
     // Si tiene un array de errores, devolvemos los errores tal como están
     if (typeof response === 'object' && Array.isArray(response['errors'])) {
       return response['errors'];

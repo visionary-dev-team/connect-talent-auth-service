@@ -13,21 +13,42 @@ import { SuccessResponseNormalizerInterceptor } from './app/http-api/response-no
 import { LoggerInterceptor } from './contexts/shared/logger/infrastructure/logger.interceptor';
 import { API } from './app/http-api/routes/route.constants';
 import fastifyCookie from '@fastify/cookie';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   console.log('LOGGER_LEVEL (dotenv):', process.env.LOGGER_LEVEL);
-
+  const fastifyAdapter = new FastifyAdapter();
+  // await fastifyAdapter.register(fastifyExpress);
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter(),
+    fastifyAdapter,
     { bufferLogs: true }
+  );
+  const fastifyInstance = app.getHttpAdapter().getInstance();
+  fastifyInstance.addHook(
+    'onRequest',
+    (request: any, reply: any, done: () => void) => {
+      reply.setHeader = function (key, value) {
+        return this.raw.setHeader(key, value);
+      };
+      reply.end = function () {
+        this.raw.end();
+      };
+      request.res = reply;
+      done();
+    }
   );
   const logger = app.get(NestLoggerService); // Cambiar para obtener NestLoggerService
   app.useLogger(logger);
   app.setGlobalPrefix(API);
-  app.register(fastifyCookie, {
+  console.log(process.env.SECRET_COOKIE);
+
+  app.use(cookieParser());
+
+  await app.register(fastifyCookie as any, {
     secret: process.env.SECRET_COOKIE, // Clave opcional para firmar las cookies
   });
+
   app.useGlobalFilters(app.get(ErrorResponseNormalizerFilter));
   app.useGlobalInterceptors(
     app.get(LoggerInterceptor),
@@ -44,7 +65,8 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<string>('PORT', '3000');
 
-  await app.listen({ port: +port, host: '0.0.0.0' });
+  // await app.listen({ port: +port, host: '0.0.0.0' });
+  await app.listen(port);
 
   logger.log(`App is ready and listening on port ${port} 🚀`); // Usando NestLoggerService
 }
