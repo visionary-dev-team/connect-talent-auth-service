@@ -1,4 +1,5 @@
 import { Controller, Get, Res } from "@nestjs/common";
+import { MessagePattern } from "@nestjs/microservices";
 import { FastifyReply } from "fastify";
 
 @Controller("health")
@@ -11,4 +12,10 @@ export class HealthController {
     });
     return res.send({ message: 'Cookie set!' });
   }
+  @MessagePattern({cmd:"test"})
+  test(){
+    console.log("auth-user-service")
+   return "hola" 
+  }
+
 }

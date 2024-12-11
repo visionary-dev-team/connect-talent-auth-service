@@ -7,6 +7,7 @@ import {
   Body,
   ParseIntPipe,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import { CreateUserUseCase } from '../../application/create-user.use-case';
 import { CreateUserDto } from '../dtos/create-user.dto';
@@ -25,11 +26,11 @@ export class UserController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly assignSkillUseCase: AssignSkillUserUseCase,
-    private readonly priorityScheduler: PriorityScheduler<User>,
+    private readonly priorityScheduler: PriorityScheduler,
     private readonly logger: Logger
 
 
-  ) {}
+  ) { }
 
   // @Get()
   // findAll(): Promise<User[]> {
@@ -67,30 +68,40 @@ export class UserController {
       throw err;
     }
   }
-
-  @Post('verify')
-  // @UseGuards(JwtAuthGuard)
-  async verifyUser(
-    @CurrentUser() user: User
-  ) {
-    let priority = 1;
-    if (user.role === ValidRoles.PROJECT_OWNER) priority = 2;
-    else if (user.role === ValidRoles.ADMIN) priority = 3;
-
-    this.priorityScheduler.addTask(user, priority, async () => {
-      this.logger.info(
-        `Verificando usuario ${user.id} con prioridad ${priority}`
-      );
-      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulación del proceso
-      this.logger.info(`Verificación completada para el usuario ${user.id}`);
-    });
-
-    return {
-      message: 'Solicitud de verificación añadida a la cola con prioridad',
-    };
+  @Get('verify/:priority')
+async verifyTask(@Param('priority') priority: number,
+@Body() bodyVerify:BodyVerify) {
+  if (priority < 1 || priority > 10) {
+    throw new BadRequestException('La prioridad debe estar entre 1 y 10');
   }
+
+  this.logger.info(`Solicitud recibida con prioridad ${priority}`);
+
+  this.priorityScheduler.addTask(priority, async () => {
+    this.logger.info(`Procesando tarea con prioridad ${priority}`);
+    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula el procesamiento
+    console.log('body verify',bodyVerify)
+    this.logger.info(`Tarea con prioridad ${priority} completada`);
+  });
+
+  return {
+    message: 'Solicitud de tarea añadida a la cola con prioridad',
+  };
+}
+@Get('processed-order')
+getProcessedOrder() {
+  return {
+    processedOrder: this.priorityScheduler.getProcessedOrder(),
+  };
+}
+
   // @Delete(':id')
   // delete(@Param('id') id: number): Promise<void> {
   //   return this.createUseCase.delete(+id);
   // }
+}
+
+type BodyVerify ={
+  name:string
+
 }

@@ -1,59 +1,54 @@
 import { Injectable } from "src/contexts/shared/dependency-injection/injectable";
 import { Logger } from "src/contexts/shared/logger/domain";
 
-interface PriorityTask<T> {
-  data: T;
+interface Task<T> {
+  item: T;
   priority: number;
-  callback: () => Promise<void>; // Función de callback que se ejecuta al procesar la tarea
+  action: () => Promise<void>;
 }
 
 @Injectable()
-export class PriorityScheduler<T> {
-  private queue: PriorityTask<T>[] = [];
-  private isProcessing = false;
+export class PriorityScheduler {
+  private queue: { priority: number; action: () => Promise<void> }[] = [];
+  private isRunning = false;
+  private processedOrder: number[] = []; // Almacena el orden de prioridades procesadas
 
-  constructor(private readonly logger: Logger) {} // Inyectamos el logger
+  constructor(private readonly logger: Logger) {}
 
-  addTask(data: T, priority: number, callback: () => Promise<void>) {
-    this.queue.push({ data, priority, callback });
-    this.queue.sort((a, b) => b.priority - a.priority); // Ordena la cola por prioridad
-
-    // Usamos el logger en lugar de console.log
-    this.logger.info(`Tarea añadida con prioridad ${priority}`, {
-      attributes: { data },
-    });
-
+  addTask(priority: number, action: () => Promise<void>) {
+    this.logger.info(`Añadiendo tarea con prioridad ${priority}`);
+    this.queue.push({ priority, action });
+    this.queue.sort((a, b) => b.priority - a.priority); // Ordenar por prioridad descendente
+    this.logger.info(`Cola actual: ${this.queue.map((task) => task.priority).join(', ')}`);
     this.processQueue();
   }
 
   private async processQueue() {
-    if (this.isProcessing || this.queue.length === 0) {
-      return;
-    }
-
-    this.isProcessing = true;
-    this.logger.debug("Iniciando el procesamiento de la cola de prioridades.");
+    if (this.isRunning) return;
+    this.isRunning = true;
 
     while (this.queue.length > 0) {
-      const currentTask = this.queue.shift();
-      if (currentTask) {
-        this.logger.info(`Procesando tarea con prioridad ${currentTask.priority}`, {
-          attributes: { data: currentTask.data },
-        });
+      const task = this.queue.shift(); // Extrae la tarea con mayor prioridad
+      if (task) {
+        this.logger.info(`Procesando tarea con prioridad ${task.priority}`);
         try {
-          await currentTask.callback();
-          this.logger.info(`Tarea completada con éxito para el elemento:`, {
-            attributes: { data: currentTask.data },
-          });
+          await task.action();
+          this.logger.info(`Tarea con prioridad ${task.priority} completada`);
+          this.processedOrder.push(task.priority); // Registrar el orden procesado
         } catch (error) {
-          this.logger.error("Error al procesar la tarea", {
-            attributes: { data: currentTask.data, error },
-          });
+          this.logger.error(`Error procesando tarea con prioridad ${task.priority}: ${error}`);
         }
       }
     }
 
-    this.isProcessing = false;
-    this.logger.debug("Procesamiento de la cola completado.");
+    this.isRunning = false;
+    this.logger.info('Cola de tareas vacía');
+  }
+
+  // Método para consultar el orden procesado
+  getProcessedOrder(): number[] {
+    return this.processedOrder;
   }
 }
+
+

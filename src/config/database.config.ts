@@ -16,6 +16,12 @@ export const databaseConfig: TypeOrmModuleAsyncOptions = {
   useFactory: async (
     configService: AppConfig
   ): Promise<TypeOrmModuleOptions> => {
+    console.log(configService.dbType,configService.dbHost,
+      configService.dbPort,
+      configService.dbUsername,
+      configService.dbPassword,
+      configService.dbName
+    )
     return {
       type: configService.dbType, // Ajusta según el tipo de base de datos
       host: configService.dbHost,

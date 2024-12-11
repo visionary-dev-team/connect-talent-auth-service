@@ -14,11 +14,12 @@ import { LoggerInterceptor } from './contexts/shared/logger/infrastructure/logge
 import { API } from './app/http-api/routes/route.constants';
 import fastifyCookie from '@fastify/cookie';
 import cookieParser from 'cookie-parser';
+import { Transport, MicroserviceOptions } from '@nestjs/microservices';
 
 async function bootstrap() {
   console.log('LOGGER_LEVEL (dotenv):', process.env.LOGGER_LEVEL);
   const fastifyAdapter = new FastifyAdapter();
-  // await fastifyAdapter.register(fastifyExpress);
+
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     fastifyAdapter,
@@ -38,7 +39,8 @@ async function bootstrap() {
       done();
     }
   );
-  const logger = app.get(NestLoggerService); // Cambiar para obtener NestLoggerService
+
+  const logger = app.get(NestLoggerService);
   app.useLogger(logger);
   app.setGlobalPrefix(API);
   console.log(process.env.SECRET_COOKIE);
@@ -65,10 +67,24 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   const port = configService.get<string>('PORT', '3000');
 
-  // await app.listen({ port: +port, host: '0.0.0.0' });
+  // Inicializar el servidor HTTP
   await app.listen(port);
+  logger.log(`HTTP Server is ready and listening on port ${port} 🚀`);
 
-  logger.log(`App is ready and listening on port ${port} 🚀`); // Usando NestLoggerService
+  // Inicializar el servidor TCP
+  const tcpApp = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        host: '127.0.0.1', // Dirección del servidor TCP
+        port: configService.get<number>('TCP_PORT', 3001), // Puerto TCP configurable
+      },
+    },
+  );
+
+  await tcpApp.listen();
+  logger.log(`TCP Server is ready and listening on port ${configService.get<number>('TCP_PORT', 3001)} 🚀`);
 }
 
 bootstrap().catch(handleError);
