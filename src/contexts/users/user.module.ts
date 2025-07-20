@@ -11,6 +11,8 @@ import { IUserRepositoryToken } from './domain/repositories/user.repository.inte
 import { FindByIdUserUseCase } from './application/find-by-id-user.use-case';
 import { SkillModule } from '../skills/skill.module';
 import { FindUserByEmailUseCase } from './application/find-by-email-use-case';
+import { VerifyUserUseCase } from './application/verifyUser.use-case';
+import { ValidateVerifyUser } from './application/validateVerifyUser.use-case';
 
 @Module({
   imports: [
@@ -27,7 +29,9 @@ import { FindUserByEmailUseCase } from './application/find-by-email-use-case';
     },
     CreateUserUseCase,
     FindByIdUserUseCase,
-    FindUserByEmailUseCase
+    FindUserByEmailUseCase,
+    VerifyUserUseCase,
+    ValidateVerifyUser
   ],
   controllers: [UserController],
   exports: [
@@ -38,4 +42,4 @@ import { FindUserByEmailUseCase } from './application/find-by-email-use-case';
     // FindUserByEmailUseCase,
   ],
 })
-export class UsersModule {}
+export class UsersModule { }

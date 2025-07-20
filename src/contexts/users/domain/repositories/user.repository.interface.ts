@@ -7,6 +7,7 @@ export interface IUserRepository {
   create(user: Partial<User>): Promise<User>;
   delete(id: number): Promise<void>;
 
+  updateVerify(id: number): Promise<void>;
   findOne(options: FindOneOptions<User>): Promise<User | null>;
   findByEmail(email: string): Promise<User>;
 }

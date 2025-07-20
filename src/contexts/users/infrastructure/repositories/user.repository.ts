@@ -9,14 +9,14 @@ export class TypeOrmUserRepository implements IUserRepository {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>
-  ) {}
+  ) { }
 
   async findAll(): Promise<User[]> {
     return this.userRepository.find();
   }
 
   async findOneById(id: number): Promise<User | null> {
-    return this.userRepository.findOne({ where: { id } });
+    return this.userRepository.findOne({ where: { id }, relations: ['profile'] });
   }
 
   async create(user: Partial<User>): Promise<User> {
@@ -24,6 +24,9 @@ export class TypeOrmUserRepository implements IUserRepository {
     const newUser = await this.userRepository.save({ ...user });
 
     return newUser;
+  }
+  async updateVerify(id: number): Promise<void> {
+    await this.userRepository.update(id, { verified: true })
   }
 
   async delete(id: number): Promise<void> {

@@ -3,7 +3,7 @@ export interface UserProps {
   id?: number;
   email: string;
   provider?: string;
-
+  verified?: boolean
   accountValidated?: boolean;
   role: ValidRoles;
   createdAt?: Date;
@@ -20,7 +20,7 @@ export interface UserProps {
 export class User {
   id?: number;
   email: string;
-
+  verified?: boolean
   providerId?: string;
   accountValidated: boolean;
   provider?: string;
@@ -50,6 +50,7 @@ export class User {
     phoneNumber,
     recoveryCode,
     deletedAt,
+    verified
   }: UserProps) {
     this.id = id;
     this.email = email;
@@ -65,5 +66,6 @@ export class User {
     this.updatedAt = updatedAt;
     this.deletedAt = deletedAt;
     this.profile = profile;
+    this.verified = verified
   }
 }

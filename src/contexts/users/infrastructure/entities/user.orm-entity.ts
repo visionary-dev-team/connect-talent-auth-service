@@ -58,6 +58,13 @@ export class User {
   @Column({ name: 'recovery_code', nullable: true })
   recoveryCode: string;
 
+
+  @Column({ name: 'verified', default: false })
+  verified: boolean
+
+  @Column({ name: 'priorityLevel', default: 1 })
+  priorityLevel: number
+
   @Column({ name: 'is_deleted', default: false })
   isDeleted: boolean;
 

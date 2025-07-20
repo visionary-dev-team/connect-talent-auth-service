@@ -20,14 +20,19 @@ import { CurrentUser } from 'src/contexts/shared/decorators/current-user.decorat
 import { AssignSkillUserUseCase } from 'src/contexts/skills/application/assign-skill-user.use-case';
 import { PriorityScheduler } from 'src/contexts/shared/algorith/PriorityScheluder';
 import { Logger } from 'src/contexts/shared/logger/domain';
+import { VerifyUserUseCase } from '../../application/verifyUser.use-case';
+import { ValidateVerifyUser } from '../../application/validateVerifyUser.use-case';
 
 @Controller('users')
 export class UserController {
   constructor(
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly assignSkillUseCase: AssignSkillUserUseCase,
-    private readonly priorityScheduler: PriorityScheduler,
-    private readonly logger: Logger
+    private readonly priorityScheduler: PriorityScheduler<BodyVerify>,
+    private readonly logger: Logger,
+    private readonly verifyUserUseCase: VerifyUserUseCase,
+    private readonly validateVerifyUser: ValidateVerifyUser
+    // private readonly varifyUserUseCase: VerifyUserUseCase
 
 
   ) { }
@@ -68,32 +73,64 @@ export class UserController {
       throw err;
     }
   }
-  @Get('verify/:priority')
-async verifyTask(@Param('priority') priority: number,
-@Body() bodyVerify:BodyVerify) {
-  if (priority < 1 || priority > 10) {
-    throw new BadRequestException('La prioridad debe estar entre 1 y 10');
+  //   @Post('verify/:priority')
+  // async verifyTask(@Param('priority') priority: number,
+  // @Body() bodyVerify:BodyVerify) {
+  //   if (priority < 1 || priority > 10) {
+  //     throw new BadRequestException('La prioridad debe estar entre 1 y 10');
+  //   }
+
+  //   this.logger.info(`Solicitud recibida con prioridad ${priority}`);
+
+  //   this.priorityScheduler.addTask(priority,bodyVerify, async () => {
+  //     this.logger.info(`Procesando tarea con prioridad ${priority}`);
+  //     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula el procesamiento
+
+
+  //     this.logger.info(`Tarea con prioridad ${priority} completada`);
+  //   });
+
+  //   return {
+  //     message: 'Solicitud de tarea añadida a la cola con prioridad',
+  //   };
+  // }
+
+
+  @Get('/:id/validate/verify')
+  validateVerify(
+    @Param('id') userid: number,
+  ) {
+    return this.validateVerifyUser.execute(userid)
   }
 
-  this.logger.info(`Solicitud recibida con prioridad ${priority}`);
+  @Post('verify/:priority')
+  async verifyTask(@Param('priority') priority: number,) {
 
-  this.priorityScheduler.addTask(priority, async () => {
-    this.logger.info(`Procesando tarea con prioridad ${priority}`);
-    await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula el procesamiento
-    console.log('body verify',bodyVerify)
-    this.logger.info(`Tarea con prioridad ${priority} completada`);
-  });
+    return this.verifyUserUseCase.execute(priority)
+    // if (priority < 1 || priority > 10) {
+    //   throw new BadRequestException('La prioridad debe estar entre 1 y 10');
+    // }
 
-  return {
-    message: 'Solicitud de tarea añadida a la cola con prioridad',
-  };
-}
-@Get('processed-order')
-getProcessedOrder() {
-  return {
-    processedOrder: this.priorityScheduler.getProcessedOrder(),
-  };
-}
+    // this.logger.info(`Solicitud recibida con prioridad ${priority}`);
+
+    // this.priorityScheduler.addTask(priority,bodyVerify, async () => {
+    //   this.logger.info(`Procesando tarea con prioridad ${priority}`);
+    //   await new Promise((resolve) => setTimeout(resolve, 1000)); // Simula el procesamiento
+
+
+    //   this.logger.info(`Tarea con prioridad ${priority} completada`);
+    // });
+
+    // return {
+    //   message: 'Solicitud de tarea añadida a la cola con prioridad',
+    // };
+  }
+  @Get('processed-order')
+  getProcessedOrder() {
+    return {
+      processedOrder: this.priorityScheduler.getProcessedOrder(),
+    };
+  }
 
   // @Delete(':id')
   // delete(@Param('id') id: number): Promise<void> {
@@ -101,7 +138,7 @@ getProcessedOrder() {
   // }
 }
 
-type BodyVerify ={
-  name:string
+type BodyVerify = {
+  name: string
 
 }
